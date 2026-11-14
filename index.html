@@ -383,7 +383,7 @@ function say(id,kind,txt){const m=$(id);m.className='msg show '+kind;m.textConte
 const LANGS=[['auto','تشخیص خودکار'],['en','انگلیسی'],['fr','فرانسوی'],['de','آلمانی'],['sv','سوئدی'],['es','اسپانیایی'],['it','ایتالیایی'],['pt','پرتغالی'],['nl','هلندی'],['ru','روسی'],['tr','ترکی'],['ar','عربی'],['zh','چینی'],['ja','ژاپنی'],['ko','کره‌ای'],['hi','هندی'],['ur','اردو'],['no','نروژی'],['da','دانمارکی'],['fi','فنلاندی'],['pl','لهستانی'],['uk','اوکراینی'],['el','یونانی'],['he','عبری'],['id','اندونزیایی']];
 LANGS.forEach(([v,n])=>{const o=document.createElement('option');o.value=v;o.textContent=n;$('lang').append(o)});
 const LANGNAME={en:'English',fr:'French',de:'German',sv:'Swedish',es:'Spanish',it:'Italian',pt:'Portuguese',nl:'Dutch',ru:'Russian',tr:'Turkish',ar:'Arabic',zh:'Chinese',ja:'Japanese',ko:'Korean',hi:'Hindi',ur:'Urdu',no:'Norwegian',da:'Danish',fi:'Finnish',pl:'Polish',uk:'Ukrainian',el:'Greek',he:'Hebrew',id:'Indonesian'};
-const DEF={gemini:{m1:'gemini-2.5-flash',m2:''},openai:{m1:'whisper-1',m2:'gpt-4o-mini'}};
+const DEF={gemini:{m1:'gemini-3.8-flash',m2:''},openai:{m1:'whisper-1',m2:'gpt-4o-mini'}};
 function loadProv(){
   const p=S.prov;[...$('provTabs').children].forEach(b=>b.classList.toggle('on',b.dataset.p===p));
   $('apiKey').value=LS.get('key_'+p,'');
@@ -520,12 +520,21 @@ $('goBtn').onclick=async()=>{
   try{
     say('aiMsg','info','در حال جداکردن صدا از ویدیو…');
     const {pcm,rate,dur}=await decodeAudio(S.file);
-    const chunkSec=S.prov==='gemini'?300:600,n=Math.ceil(dur/chunkSec);let cues=[],approx=false;
+    const chunkSec=S.prov==='gemini'?300:600,n=Math.ceil(dur/chunkSec);let cues=[],approx=false,mG=m1;
     for(let i=0;i<n;i++){
       const off=i*chunkSec,seg=pcm.subarray(Math.floor(off*rate),Math.floor(Math.min(dur,off+chunkSec)*rate)),segDur=seg.length/rate,wav=wavBlob(seg,rate);
       say('aiMsg','info',`در حال شنیدن و ترجمه… (بخش ${i+1} از ${n})`);
       let part;
-      if(S.prov==='gemini')part=await geminiChunk(key,m1,wav,lang,segDur);
+      if(S.prov==='gemini'){
+        try{part=await geminiChunk(key,mG,wav,lang,segDur)}
+        catch(e){ // retired model: switch to the model the service recommends and retry once
+          const m=/use models\/([\w.\-]+)/.exec(e.message||'');
+          if(!m||m[1]===mG)throw e;
+          mG=m[1];$('model1').value=mG;saveProv();
+          say('aiMsg','info','مدل قبلی دیگر در دسترس نیست؛ با مدل '+mG+' دوباره امتحان می‌شود…');
+          part=await geminiChunk(key,mG,wav,lang,segDur);
+        }
+      }
       else{
         const r=await openaiSTT(key,m1,wav,lang,segDur);approx=approx||r.approx;part=r.cues;
         if(part.length){say('aiMsg','info',`در حال ترجمه به فارسی… (بخش ${i+1} از ${n})`);const fa=await openaiTranslate(key,m2,part.map(c=>c.src));part.forEach((c,k)=>c.fa=fa[k]||c.src)}
