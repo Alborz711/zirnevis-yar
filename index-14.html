@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>زیرنویس‌یار — زیرنویس فارسی خودکار</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800;900&family=Noto+Sans+Arabic:wght@400;600;700;800&family=Noto+Naskh+Arabic:wght@400;700&family=Noto+Kufi+Arabic:wght@400;700;800&family=Lalezar&family=Markazi+Text:wght@400;700&family=Amiri:wght@400;700&family=Scheherazade+New:wght@400;700&family=Mirza:wght@400;700&family=Katibeh&family=Rakkas&family=Baloo+Bhaijaan+2:wght@400;700;800&family=Gulzar&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap">
+<style>
+:root{--bg:#0f1115;--card:#181b22;--card2:#20242d;--line:#2c313c;--tx:#eef0f4;--mut:#9aa3b2;--acc:#f5b82e;--acc2:#3ecf8e;--err:#ff6b6b;--r:14px}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--tx);font-family:"Vazirmatn",Tahoma,sans-serif;font-size:15px;line-height:1.7}
+button,input,select,textarea{font:inherit;color:inherit}
+header{padding:14px 16px 6px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+header h1{margin:0;font-size:20px;font-weight:800}
+header h1 span{color:var(--acc)}
+header p{margin:0;color:var(--mut);font-size:13px}
+main{max-width:1180px;margin:0 auto;padding:8px 12px 80px;display:grid;gap:14px}
+@media(min-width:900px){main{grid-template-columns:minmax(300px,400px) 1fr;align-items:start}.stageWrap{position:sticky;top:10px}}
+@media(max-width:899px){.stageWrap{position:sticky;top:0;z-index:5;background:var(--bg);padding-bottom:6px}.stage{max-height:44vh}}
+.stage{position:relative;background:#000;border-radius:var(--r);overflow:hidden;display:flex;justify-content:center;min-height:160px}
+.stage video{display:block;max-width:100%;max-height:inherit;width:auto;height:auto;max-height:70vh}
+@media(max-width:899px){.stage video{max-height:44vh}}
+.stage canvas{position:absolute;inset:0;margin:auto;pointer-events:none}
+.empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--mut);text-align:center;padding:20px}
+.col{display:grid;gap:14px;min-width:0}
+section{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+section h2{margin:0 0 10px;font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px}
+section h2 b{background:var(--acc);color:#1a1300;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:13px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+label.f{display:grid;gap:4px;font-size:13px;color:var(--mut)}
+input[type=text],input[type=password],select,textarea{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;width:100%;min-width:0}
+input[type=color]{width:44px;height:36px;padding:2px;background:var(--card2);border:1px solid var(--line);border-radius:10px}
+input[type=range]{width:100%;accent-color:var(--acc)}
+.btn{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:9px 14px;cursor:pointer;font-weight:600}
+.btn:hover{border-color:var(--acc)}
+.btn.pri{background:var(--acc);border-color:var(--acc);color:#1a1300}
+.btn.ok{background:var(--acc2);border-color:var(--acc2);color:#04210f}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.sm{padding:5px 10px;font-size:13px}
+.tabs{display:inline-flex;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px}
+.tabs button{border:0;background:transparent;padding:6px 14px;border-radius:8px;cursor:pointer;font-weight:600;color:var(--mut)}
+.tabs button.on{background:var(--acc);color:#1a1300}
+.hint{color:var(--mut);font-size:12.5px;margin:6px 0 0}
+.msg{margin-top:10px;padding:9px 12px;border-radius:10px;font-size:13.5px;display:none;white-space:pre-wrap;word-break:break-word}
+.msg.show{display:block}.msg.info{background:#1d2a3d;color:#bcd7ff}.msg.err{background:#3a1c1f;color:#ffc2c2}.msg.good{background:#143024;color:#b6f2d3}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.pc{background:var(--card2);border:2px solid transparent;border-radius:12px;overflow:hidden;cursor:pointer;padding:0;text-align:center}
+.pc canvas{display:block;width:100%;aspect-ratio:16/9}
+.pc span{display:block;padding:5px 6px;font-size:12.5px;color:var(--mut)}
+.pc.on{border-color:var(--acc)}.pc.on span{color:var(--tx)}
+details{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
+summary{cursor:pointer;font-weight:600}
+.cue{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:start;padding:8px 0;border-bottom:1px solid var(--line)}
+.cue .t{display:grid;gap:4px;width:76px}
+.cue .t input{padding:4px 6px;font-size:12.5px;text-align:center;direction:ltr}
+.cue textarea{min-height:52px;resize:vertical}
+.cue .src{font-size:12px;color:var(--mut);direction:ltr;text-align:left;margin-top:3px;unicode-bidi:plaintext}
+.cue.now{background:rgba(245,184,46,.08)}
+.cues{max-height:420px;overflow:auto}
+progress{width:100%;height:10px;accent-color:var(--acc2)}
+#outVideo{max-width:100%;max-height:50vh;border-radius:10px;margin-top:10px;display:none}
+a.dl{display:inline-block;text-decoration:none}
+</style>
+</head>
+<body>
+<header>
+  <h1>زیرنویس<span>‌یار</span></h1>
+  <p>ویدیو را بدهید؛ گفتار به فارسی ترجمه و با قالب دلخواه روی ویدیو چسبانده می‌شود.</p>
+</header>
+<main>
+  <div class="stageWrap">
+    <div class="stage" id="stage">
+      <video id="vid" controls playsinline></video>
+      <canvas id="ov"></canvas>
+      <div class="empty" id="empty">هنوز ویدیویی انتخاب نشده است.<br>از بخش ۱ یک ویدیو انتخاب کنید.</div>
+    </div>
+  </div>
+
+  <div class="col">
+    <section>
+      <h2><b>۱</b>ویدیو</h2>
+      <div class="row">
+        <label class="btn pri">انتخاب ویدیو<input id="fileIn" type="file" accept="video/*,audio/*" hidden></label>
+        <span id="fileInfo" class="hint" style="margin:0"></span>
+      </div>
+    </section>
+
+    <section>
+      <h2><b>۲</b>ترجمه و زیرنویس خودکار</h2>
+      <div class="row" style="margin-bottom:10px">
+        <div class="tabs" id="provTabs">
+          <button data-p="gemini">Gemini (رایگان)</button>
+          <button data-p="openai">OpenAI (پولی)</button>
+        </div>
+      </div>
+      <div class="grid2">
+        <label class="f">کلید API<input id="apiKey" type="password" autocomplete="off" placeholder="کلید را اینجا بچسبانید" dir="ltr"></label>
+        <label class="f">زبان ویدیو<select id="lang"></select></label>
+        <label class="f" id="m1w"><span id="m1l">مدل</span><input id="model1" type="text" list="dl1" dir="ltr"><datalist id="dl1"></datalist></label>
+        <label class="f" id="m2w"><span>مدل ترجمه</span><input id="model2" type="text" list="dl2" dir="ltr"><datalist id="dl2"></datalist></label>
+      </div>
+      <p class="hint" id="provHint"></p>
+      <div class="row" style="margin-top:10px">
+        <button class="btn pri" id="goBtn">ساخت زیرنویس فارسی</button>
+        <button class="btn sm" id="listBtn">دریافت فهرست مدل‌ها</button>
+        <label class="btn sm">بارگذاری فایل SRT آماده<input id="srtIn" type="file" accept=".srt,.vtt,text/plain" hidden></label>
+      </div>
+      <div class="msg" id="aiMsg"></div>
+    </section>
+
+    <section>
+      <h2><b>۳</b>قالب زیرنویس</h2>
+      <div class="row" style="margin-bottom:10px">
+        <div class="tabs" id="galTabs">
+          <button data-f="all" class="on">همه</button>
+          <button data-f="plain">بدون هایلایت</button>
+          <button data-f="hl">با هایلایت</button>
+        </div>
+      </div>
+      <div class="gal" id="gal"></div>
+      <details>
+        <summary>تنظیم دستی قالب</summary>
+        <div class="grid2" style="margin-top:10px">
+          <label class="f">فونت<select id="sFont"></select></label>
+          <label class="f">ضخامت<select id="sWeight"><option value="400">معمولی</option><option value="600">نیمه‌پررنگ</option><option value="700">پررنگ</option><option value="800">خیلی پررنگ</option><option value="900">سیاه</option></select></label>
+          <label class="f">اندازه<input id="sSize" type="range" min="3" max="12" step="0.25"></label>
+          <label class="f">جای زیرنویس (بالا ↔ پایین)<input id="sPos" type="range" min="8" max="94" step="1"></label>
+          <label class="f">رنگ متن<input id="sColor" type="color"></label>
+          <label class="f">رنگ دورخط<input id="sStroke" type="color"></label>
+          <label class="f">ضخامت دورخط<input id="sStrokeW" type="range" min="0" max="0.3" step="0.01"></label>
+          <label class="f">سایه<select id="sShadow"><option value="1">دارد</option><option value="0">ندارد</option></select></label>
+          <label class="f">پس‌زمینه<select id="sBg"><option value="none">ندارد</option><option value="box">کادر پشت متن</option><option value="band">نوار سراسری</option></select></label>
+          <label class="f">رنگ پس‌زمینه<input id="sBgColor" type="color"></label>
+          <label class="f">شفافیت پس‌زمینه<input id="sBgAlpha" type="range" min="0.1" max="1" step="0.05"></label>
+          <label class="f">هایلایت<select id="sHl"><option value="none">ندارد</option><option value="color">رنگ‌شدن کلمهٔ جاری</option><option value="box">کادر دور کلمهٔ جاری</option><option value="reveal">روشن‌شدن تدریجی</option></select></label>
+          <label class="f">رنگ هایلایت<input id="sHlColor" type="color"></label>
+        </div>
+      </details>
+    </section>
+
+    <section>
+      <h2><b>۴</b>متن زیرنویس</h2>
+      <div class="row">
+        <button class="btn sm" id="addCue">افزودن خط</button>
+        <button class="btn sm" id="srtOut">ذخیرهٔ فایل SRT</button>
+        <span class="hint" id="cueCount" style="margin:0"></span>
+      </div>
+      <div class="cues" id="cues"></div>
+    </section>
+
+    <section>
+      <h2><b>۵</b>خروجی ویدیو با زیرنویس چسبیده</h2>
+      <div class="row">
+        <button class="btn ok" id="expBtn">ساخت ویدیو</button>
+        <button class="btn sm" id="expCancel" style="display:none">لغو</button>
+      </div>
+      <p class="hint">ساخت خروجی به اندازهٔ طول ویدیو زمان می‌برد. تا پایان کار همین صفحه را باز و روشن نگه دارید.</p>
+      <progress id="expProg" value="0" max="1" style="display:none"></progress>
+      <div class="msg" id="expMsg"></div>
+      <video id="outVideo" controls playsinline></video>
+      <div class="row" id="outRow" style="margin-top:10px;display:none">
+        <a class="btn pri dl" id="outDl">دانلود ویدیو</a>
+        <button class="btn" id="outShare" style="display:none">اشتراک‌گذاری / ذخیره در گوشی</button>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const LS={get(k,d){try{const v=localStorage.getItem('zy_'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('zy_'+k,JSON.stringify(v))}catch(e){}}};
+
+/* ---------- fonts & presets ---------- */
+const FONTS={
+ "Vazirmatn":{n:"وزیرمتن",lh:1.5},"Noto Sans Arabic":{n:"نوتو سنس",lh:1.55},"Noto Naskh Arabic":{n:"نسخ",lh:1.6},
+ "Noto Kufi Arabic":{n:"کوفی",lh:1.6},"Lalezar":{n:"لاله‌زار",lh:1.45},"Markazi Text":{n:"مرکزی",lh:1.35},
+ "Amiri":{n:"امیری",lh:1.6},"Scheherazade New":{n:"شهرزاد",lh:1.6},"Mirza":{n:"میرزا",lh:1.4},
+ "Katibeh":{n:"کتیبه",lh:1.35},"Rakkas":{n:"رَکّاس",lh:1.5},"Baloo Bhaijaan 2":{n:"بالو",lh:1.5},
+ "Gulzar":{n:"گلزار (نستعلیق)",lh:2.0},"Noto Nastaliq Urdu":{n:"نستعلیق نوتو",lh:2.3}
+};
+const BASE={font:"Vazirmatn",weight:700,size:6,color:"#ffffff",stroke:"#000000",strokeW:0.14,shadow:1,bg:"none",bgColor:"#000000",bgAlpha:0.6,hl:"none",hlColor:"#ffd400",pos:82};
+const PRESETS=[
+ {n:"کلاسیک سفید",s:{}},
+ {n:"زرد سینمایی",s:{color:"#ffe14d"}},
+ {n:"کادر تیره",s:{font:"Noto Sans Arabic",weight:600,strokeW:0,shadow:0,bg:"box",bgAlpha:0.65}},
+ {n:"نوار خبری",s:{font:"Noto Kufi Arabic",strokeW:0,shadow:0,bg:"band",bgColor:"#0b3d91",bgAlpha:0.85,size:5}},
+ {n:"کتابی (نسخ)",s:{font:"Noto Naskh Arabic",color:"#fff7e0",stroke:"#2b1a00",size:6.5}},
+ {n:"امیری کلاسیک",s:{font:"Amiri",strokeW:0.1,size:6.5}},
+ {n:"کاغذی (میرزا)",s:{font:"Mirza",color:"#1a1a1a",strokeW:0,shadow:0,bg:"box",bgColor:"#ffffff",bgAlpha:0.9,size:7}},
+ {n:"نستعلیق",s:{font:"Gulzar",weight:400,strokeW:0.08,size:6.5}},
+ {n:"کتیبه",s:{font:"Katibeh",weight:400,color:"#ffd9a0",stroke:"#3b1d00",size:8.5}},
+ {n:"لاله‌زار + رنگ",s:{font:"Lalezar",weight:400,strokeW:0.16,size:8,hl:"color",hlColor:"#ffd400"}},
+ {n:"کارائوکه سبز",s:{weight:900,hl:"color",hlColor:"#39ff88",size:6.5}},
+ {n:"کادر زرد",s:{weight:800,strokeW:0.1,hl:"box",hlColor:"#ffd400",size:6.5}},
+ {n:"کادر قرمز کوفی",s:{font:"Noto Kufi Arabic",weight:800,hl:"box",hlColor:"#ef4444",size:5.5}},
+ {n:"بنفش نئون",s:{font:"Baloo Bhaijaan 2",weight:800,stroke:"#5b21b6",strokeW:0.18,hl:"box",hlColor:"#c084fc",size:6.5}},
+ {n:"رَکّاس آتشین",s:{font:"Rakkas",weight:400,stroke:"#b91c1c",strokeW:0.16,hl:"color",hlColor:"#fde047",size:7.5}},
+ {n:"روشن‌شدن تدریجی",s:{font:"Markazi Text",strokeW:0,bg:"box",bgAlpha:0.55,hl:"reveal",size:7.5}}
+].map(p=>({n:p.n,s:Object.assign({},BASE,p.s)}));
+
+const S={file:null,url:null,cues:[],style:Object.assign({},BASE,LS.get('style',{})),preset:LS.get('preset',0),prov:LS.get('prov','gemini'),filter:'all'};
+const SAMPLE="این یک نمونهٔ زیرنویس فارسی است";
+
+/* ---------- subtitle renderer (used for preview, gallery and export) ---------- */
+function hexA(h,a){const n=parseInt(h.slice(1),16);return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`}
+function lum(h){const n=parseInt(h.slice(1),16);return (0.299*(n>>16&255)+0.587*(n>>8&255)+0.114*(n&255))/255}
+function rrect(ctx,x,y,w,h,r){r=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+function drawSub(ctx,W,H,text,st,prog,posOverride){
+  if(!text||!text.trim())return;
+  const fs=W*st.size/100, lh=fs*((FONTS[st.font]||{}).lh||1.5);
+  ctx.save();
+  ctx.font=`${st.weight} ${fs}px "${st.font}","Vazirmatn",Tahoma,sans-serif`;
+  ctx.direction='rtl';ctx.textAlign='right';ctx.textBaseline='middle';ctx.lineJoin='round';
+  const maxW=W*0.88, sp=ctx.measureText(' ').width;
+  const ws=text.trim().split(/\s+/).filter(Boolean).map(t=>({t,w:ctx.measureText(t).width}));
+  const wrap=lim=>{const ls=[];let cur=[],cw=0;for(const w of ws){if(cur.length&&cw+sp+w.w>lim){ls.push(cur);cur=[];cw=0}cw+=(cur.length?sp:0)+w.w;cur.push(w)}if(cur.length)ls.push(cur);return ls};
+  let lines=wrap(maxW);
+  if(lines.length>1){ // balance line lengths instead of leaving a short last line
+    const tot=ws.reduce((a,w)=>a+w.w,0)+sp*(ws.length-1);
+    for(const f of [1.05,1.15,1.3]){const alt=wrap(Math.min(maxW,tot/lines.length*f));if(alt.length===lines.length){lines=alt;break}}
+  }
+  const all=lines.flat();let act=-1;
+  if(st.hl!=='none'&&prog!=null){
+    const tot=all.reduce((a,w)=>a+w.t.length+1,0),target=Math.max(0,Math.min(1,prog))*tot;let acc=0;
+    for(let i=0;i<all.length;i++){acc+=all[i].t.length+1;if(target<=acc){act=i;break}}
+    if(act<0)act=all.length-1;
+  }
+  const blockH=lines.length*lh, pad=fs*0.35;
+  let top=H*(posOverride!=null?posOverride:st.pos)/100-blockH/2;
+  top=Math.max(pad,Math.min(H-pad-blockH,top));
+  if(st.bg==='band'){ctx.fillStyle=hexA(st.bgColor,st.bgAlpha);ctx.fillRect(0,top-pad,W,blockH+pad*2)}
+  let gi=0;
+  lines.forEach((ln,i)=>{
+    const y=top+lh*(i+0.5), lw=ln.reduce((a,w)=>a+w.w,0)+sp*(ln.length-1);
+    let x=W/2+lw/2;
+    if(st.bg==='box'){ctx.fillStyle=hexA(st.bgColor,st.bgAlpha);rrect(ctx,x-lw-pad*1.2,y-lh/2+fs*0.04,lw+pad*2.4,lh-fs*0.08,fs*0.28);ctx.fill()}
+    for(const w of ln){
+      const on=gi===act;let fill=st.color,stroke=st.strokeW>0,alpha=1;
+      if(st.hl==='color'&&on)fill=st.hlColor;
+      if(st.hl==='reveal'&&act>=0&&gi>act)alpha=0.32;
+      if(st.hl==='box'&&on){
+        ctx.fillStyle=st.hlColor;rrect(ctx,x-w.w-fs*0.18,y-lh*0.42,w.w+fs*0.36,lh*0.84,fs*0.25);ctx.fill();
+        fill=lum(st.hlColor)>0.55?'#111111':'#ffffff';stroke=false;
+      }
+      ctx.globalAlpha=alpha;
+      if(st.shadow&&!(st.hl==='box'&&on)){ctx.shadowColor='rgba(0,0,0,.65)';ctx.shadowBlur=fs*0.14;ctx.shadowOffsetY=fs*0.05}
+      if(stroke){ctx.lineWidth=fs*st.strokeW;ctx.strokeStyle=st.stroke;ctx.strokeText(w.t,x,y);ctx.shadowColor='transparent'}
+      ctx.fillStyle=fill;ctx.fillText(w.t,x,y);
+      ctx.shadowColor='transparent';ctx.globalAlpha=1;
+      x-=w.w+sp;gi++;
+    }
+  });
+  ctx.restore();
+}
+function cueAt(t){for(const c of S.cues)if(t>=c.s&&t<c.e)return c;return null}
+
+/* ---------- preview overlay ---------- */
+const vid=$('vid'),ov=$('ov'),octx=ov.getContext('2d');
+const snap=document.createElement('canvas');let snapOK=false;
+function fitOverlay(){
+  if(!vid.videoWidth)return;
+  const r=vid.getBoundingClientRect();
+  ov.style.width=r.width+'px';ov.style.height=r.height+'px';
+  const k=Math.min(2,window.devicePixelRatio||1);
+  const w=Math.round(r.width*k),h=Math.round(r.height*k);
+  if(ov.width!==w||ov.height!==h){ov.width=w;ov.height=h}
+}
+function takeSnap(){
+  if(!vid.videoWidth)return;
+  snap.width=320;snap.height=Math.round(320*vid.videoHeight/vid.videoWidth);
+  try{snap.getContext('2d').drawImage(vid,0,0,snap.width,snap.height);snapOK=true;drawGallery()}catch(e){}
+}
+let lastCue=null;
+function tick(){
+  if(vid.videoWidth){
+    fitOverlay();octx.clearRect(0,0,ov.width,ov.height);
+    const t=vid.currentTime,c=cueAt(t);
+    if(c)drawSub(octx,ov.width,ov.height,c.fa,S.style,(t-c.s)/Math.max(0.01,c.e-c.s));
+    else if(!S.cues.length)drawSub(octx,ov.width,ov.height,SAMPLE,S.style,(performance.now()/2500)%1);
+    if(c!==lastCue){lastCue=c;markNow(c)}
+  }
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+vid.addEventListener('loadeddata',()=>{$('empty').style.display='none';setTimeout(takeSnap,150)});
+vid.addEventListener('seeked',takeSnap);vid.addEventListener('pause',takeSnap);
+
+/* ---------- gallery ---------- */
+function drawCard(cv,st){
+  const k=Math.min(2,window.devicePixelRatio||1),W=Math.round(240*k),H=Math.round(135*k);
+  if(cv.width!==W){cv.width=W;cv.height=H}
+  const c=cv.getContext('2d');
+  if(snapOK){const sc=Math.max(W/snap.width,H/snap.height),sw=snap.width*sc,sh=snap.height*sc;c.drawImage(snap,(W-sw)/2,(H-sh)/2,sw,sh);c.fillStyle='rgba(0,0,0,.12)';c.fillRect(0,0,W,H)}
+  else{const g=c.createLinearGradient(0,0,W,H);g.addColorStop(0,'#35507a');g.addColorStop(.55,'#7a4a6b');g.addColorStop(1,'#c98a4b');c.fillStyle=g;c.fillRect(0,0,W,H)}
+  const cur=lastCue||S.cues[0];
+  const txt=cur?cur.fa.replace(/\n/g,' ').split(/\s+/).slice(0,6).join(' '):SAMPLE;
+  drawSub(c,W,H,txt,Object.assign({},st,{size:Math.min(st.size*1.25,11)}),0.45,50);
+}
+function buildGallery(){
+  const g=$('gal');g.innerHTML='';
+  PRESETS.forEach((p,i)=>{
+    const isHl=p.s.hl!=='none';
+    if(S.filter==='plain'&&isHl||S.filter==='hl'&&!isHl)return;
+    const b=document.createElement('button');b.className='pc'+(i===S.preset?' on':'');b.type='button';
+    const cv=document.createElement('canvas'),sp=document.createElement('span');sp.textContent=p.n;
+    b.append(cv,sp);b._p=p;b._cv=cv;
+    b.onclick=()=>{S.preset=i;S.style=Object.assign({},p.s);LS.set('preset',i);saveStyle();syncControls();g.querySelectorAll('.pc').forEach(x=>x.classList.toggle('on',x===b))};
+    g.append(b);
+  });
+  drawGallery();
+}
+function drawGallery(){document.querySelectorAll('#gal .pc').forEach(b=>drawCard(b._cv,b._p.s))}
+$('galTabs').onclick=e=>{const f=e.target.dataset.f;if(!f)return;S.filter=f;[...$('galTabs').children].forEach(b=>b.classList.toggle('on',b.dataset.f===f));buildGallery()};
+
+/* ---------- manual style controls ---------- */
+const CTL={sFont:'font',sWeight:'weight',sSize:'size',sPos:'pos',sColor:'color',sStroke:'stroke',sStrokeW:'strokeW',sShadow:'shadow',sBg:'bg',sBgColor:'bgColor',sBgAlpha:'bgAlpha',sHl:'hl',sHlColor:'hlColor'};
+const NUM=new Set(['weight','size','pos','strokeW','shadow','bgAlpha']);
+for(const f in FONTS){const o=document.createElement('option');o.value=f;o.textContent=FONTS[f].n;$('sFont').append(o)}
+function syncControls(){for(const id in CTL)$(id).value=S.style[CTL[id]]}
+function saveStyle(){LS.set('style',S.style)}
+for(const id in CTL)$(id).addEventListener('input',()=>{const k=CTL[id];S.style[k]=NUM.has(k)?parseFloat($(id).value):$(id).value;S.preset=-1;LS.set('preset',-1);saveStyle();document.querySelectorAll('#gal .pc').forEach(x=>x.classList.remove('on'))});
+
+/* ---------- video file ---------- */
+$('fileIn').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  if(S.url)URL.revokeObjectURL(S.url);
+  S.file=f;S.url=URL.createObjectURL(f);vid.src=S.url;
+  $('fileInfo').textContent=f.name+' — '+(f.size/1048576).toFixed(1)+' مگابایت';
+  S.cues=[];renderCues();
+};
+
+/* ---------- cue list / editor ---------- */
+function fmt(t){t=Math.max(0,t);const m=Math.floor(t/60),s=t-m*60;return m+':'+(s<10?'0':'')+s.toFixed(2)}
+function parseT(v){v=String(v).trim().replace(',','.');const p=v.split(':').map(Number);if(p.some(isNaN))return null;return p.reduce((a,x)=>a*60+x,0)}
+function renderCues(){
+  const box=$('cues');box.innerHTML='';
+  S.cues.sort((a,b)=>a.s-b.s);
+  S.cues.forEach(c=>{
+    const d=document.createElement('div');d.className='cue';c._el=d;
+    const t=document.createElement('div');t.className='t';
+    const a=document.createElement('input'),b=document.createElement('input');a.type=b.type='text';a.value=fmt(c.s);b.value=fmt(c.e);
+    a.onchange=()=>{const v=parseT(a.value);if(v!=null)c.s=v;a.value=fmt(c.s)};
+    b.onchange=()=>{const v=parseT(b.value);if(v!=null)c.e=v;b.value=fmt(c.e)};
+    t.append(a,b);
+    const mid=document.createElement('div');
+    const ta=document.createElement('textarea');ta.value=c.fa;ta.dir='rtl';ta.oninput=()=>{c.fa=ta.value};
+    ta.onfocus=()=>{if(vid.videoWidth){vid.pause();vid.currentTime=c.s+0.01}};
+    mid.append(ta);
+    if(c.src){const s=document.createElement('div');s.className='src';s.textContent=c.src;mid.append(s)}
+    const x=document.createElement('button');x.className='btn sm';x.textContent='حذف';x.onclick=()=>{S.cues=S.cues.filter(q=>q!==c);renderCues()};
+    d.append(t,mid,x);box.append(d);
+  });
+  $('cueCount').textContent=S.cues.length?S.cues.length+' خط':'هنوز زیرنویسی ساخته نشده است.';
+  drawGallery();
+}
+function markNow(c){document.querySelectorAll('.cue.now').forEach(e=>e.classList.remove('now'));if(c&&c._el){c._el.classList.add('now')}}
+$('addCue').onclick=()=>{const t=vid.currentTime||0;S.cues.push({s:t,e:t+2.5,src:'',fa:'متن زیرنویس'});renderCues()};
+
+/* ---------- SRT in/out ---------- */
+function srtTime(t){const ms=Math.round(t*1000),h=Math.floor(ms/3600000),m=Math.floor(ms%3600000/60000),s=Math.floor(ms%60000/1000),z=ms%1000;const p=(n,l=2)=>String(n).padStart(l,'0');return `${p(h)}:${p(m)}:${p(s)},${p(z,3)}`}
+function toSRT(){return S.cues.map((c,i)=>`${i+1}\n${srtTime(c.s)} --> ${srtTime(c.e)}\n${c.fa}\n`).join('\n')}
+function parseSRT(txt){
+  const out=[],re=/(\d+:)?(\d+):(\d+)[.,](\d+)\s*-->\s*(\d+:)?(\d+):(\d+)[.,](\d+)/;
+  for(const blk of txt.replace(/\r/g,'').split(/\n\s*\n/)){
+    const ls=blk.split('\n'),i=ls.findIndex(l=>re.test(l));if(i<0)continue;
+    const m=ls[i].match(re),tt=(h,mm,s,z)=>(parseInt(h||'0')*3600)+parseInt(mm)*60+parseInt(s)+parseInt(z.padEnd(3,'0').slice(0,3))/1000;
+    const fa=ls.slice(i+1).join('\n').replace(/<[^>]+>/g,'').replace(/[‎‏]/g,'').trim();
+    if(fa)out.push({s:tt(m[1],m[2],m[3],m[4]),e:tt(m[5],m[6],m[7],m[8]),src:'',fa});
+  }
+  return out;
+}
+function saveBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000)}
+$('srtOut').onclick=()=>{if(!S.cues.length)return;saveBlob(new Blob(['﻿'+toSRT()],{type:'text/plain;charset=utf-8'}),'zirnevis.srt')};
+$('srtIn').onchange=async e=>{const f=e.target.files[0];if(!f)return;const c=parseSRT(await f.text());if(c.length){S.cues=c;renderCues();say('aiMsg','good',c.length+' خط زیرنویس از فایل خوانده شد.')}else say('aiMsg','err','در این فایل زیرنویسی پیدا نشد.');e.target.value=''};
+
+function say(id,kind,txt){const m=$(id);m.className='msg show '+kind;m.textContent=txt}
+
+/* ---------- provider settings ---------- */
+const LANGS=[['auto','تشخیص خودکار'],['en','انگلیسی'],['fr','فرانسوی'],['de','آلمانی'],['sv','سوئدی'],['es','اسپانیایی'],['it','ایتالیایی'],['pt','پرتغالی'],['nl','هلندی'],['ru','روسی'],['tr','ترکی'],['ar','عربی'],['zh','چینی'],['ja','ژاپنی'],['ko','کره‌ای'],['hi','هندی'],['ur','اردو'],['no','نروژی'],['da','دانمارکی'],['fi','فنلاندی'],['pl','لهستانی'],['uk','اوکراینی'],['el','یونانی'],['he','عبری'],['id','اندونزیایی']];
+LANGS.forEach(([v,n])=>{const o=document.createElement('option');o.value=v;o.textContent=n;$('lang').append(o)});
+const LANGNAME={en:'English',fr:'French',de:'German',sv:'Swedish',es:'Spanish',it:'Italian',pt:'Portuguese',nl:'Dutch',ru:'Russian',tr:'Turkish',ar:'Arabic',zh:'Chinese',ja:'Japanese',ko:'Korean',hi:'Hindi',ur:'Urdu',no:'Norwegian',da:'Danish',fi:'Finnish',pl:'Polish',uk:'Ukrainian',el:'Greek',he:'Hebrew',id:'Indonesian'};
+const DEF={gemini:{m1:'gemini-3.8-flash',m2:''},openai:{m1:'whisper-1',m2:'gpt-4o-mini'}};
+function loadProv(){
+  const p=S.prov;[...$('provTabs').children].forEach(b=>b.classList.toggle('on',b.dataset.p===p));
+  $('apiKey').value=LS.get('key_'+p,'');
+  $('model1').value=LS.get('m1_'+p,DEF[p].m1);$('model2').value=LS.get('m2_'+p,DEF[p].m2);
+  $('m2w').style.display=p==='openai'?'':'none';
+  $('m1l').textContent=p==='openai'?'مدل تبدیل گفتار به متن':'مدل';
+  $('dl1').innerHTML='';$('dl2').innerHTML='';
+  $('provHint').textContent=p==='gemini'
+   ?'کلید رایگان را از Google AI Studio بگیرید. در سطح رایگان، گوگل ممکن است از محتوا برای بهبود محصولاتش استفاده کند. کلید فقط در همین مرورگر ذخیره می‌شود.'
+   :'کلید را از حساب OpenAI Platform بگیرید؛ هزینه به‌ازای هر دقیقه صدا حساب می‌شود. کلید فقط در همین مرورگر ذخیره می‌شود.';
+}
+function saveProv(){const p=S.prov;LS.set('key_'+p,$('apiKey').value.trim());LS.set('m1_'+p,$('model1').value.trim());LS.set('m2_'+p,$('model2').value.trim())}
+$('provTabs').onclick=e=>{const p=e.target.dataset.p;if(!p)return;saveProv();S.prov=p;LS.set('prov',p);loadProv()};
+['apiKey','model1','model2'].forEach(id=>$(id).addEventListener('change',saveProv));
+$('lang').value=LS.get('lang','auto');$('lang').onchange=()=>LS.set('lang',$('lang').value);
+
+async function api(url,opt){
+  let r;try{r=await fetch(url,opt)}catch(e){throw new Error('اتصال به سرویس برقرار نشد. اینترنت یا فیلترشکن را بررسی کنید. ('+e.message+')')}
+  const txt=await r.text();let j=null;try{j=JSON.parse(txt)}catch(e){}
+  if(!r.ok){const m=j&&j.error&&(j.error.message||j.error.status)||txt.slice(0,300);throw new Error('خطای سرویس ('+r.status+'): '+m)}
+  return j;
+}
+function fillDL(id,arr){$(id).innerHTML='';arr.forEach(v=>{const o=document.createElement('option');o.value=v;$(id).append(o)})}
+async function listModels(silent){
+  const key=$('apiKey').value.trim();if(!key){if(!silent)say('aiMsg','err','اول کلید API را وارد کنید.');return}
+  try{
+    if(S.prov==='gemini'){
+      const j=await api('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200',{headers:{'x-goog-api-key':key}});
+      const ms=(j.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes('generateContent')).map(m=>m.name.replace('models/','')).filter(n=>/^gemini/.test(n)&&!/tts|image|embedding|live|audio-dialog/.test(n));
+      fillDL('dl1',ms);
+      if(ms.length&&!ms.includes($('model1').value.trim())){$('model1').value=ms.find(n=>/flash/.test(n)&&!/lite|preview|exp/.test(n))||ms.find(n=>/flash/.test(n))||ms[0];saveProv()}
+      if(!silent)say('aiMsg','good',ms.length+' مدل پیدا شد. می‌توانید از فهرست «مدل» انتخاب کنید.');
+    }else{
+      const j=await api('https://api.openai.com/v1/models',{headers:{Authorization:'Bearer '+key}});
+      const ids=(j.data||[]).map(m=>m.id).sort();
+      const stt=ids.filter(n=>/whisper|transcribe/.test(n)&&!/realtime|live|diarize/.test(n));
+      const chat=ids.filter(n=>/^(gpt-|o\d|chatgpt)/.test(n)&&!/audio|realtime|transcribe|tts|image|search|embedding|moderation|instruct|codex/.test(n));
+      fillDL('dl1',stt);fillDL('dl2',chat);
+      if(stt.length&&!stt.includes($('model1').value.trim()))$('model1').value=stt.includes('whisper-1')?'whisper-1':stt[0];
+      if(chat.length&&!chat.includes($('model2').value.trim()))$('model2').value=chat.find(n=>/mini/.test(n))||chat[0];
+      saveProv();
+      if(!silent)say('aiMsg','good',stt.length+' مدل گفتار و '+chat.length+' مدل ترجمه پیدا شد.');
+    }
+  }catch(e){if(!silent)say('aiMsg','err',e.message)}
+}
+$('listBtn').onclick=()=>listModels(false);
+
+/* ---------- audio extraction ---------- */
+async function decodeAudio(file){
+  const AC=window.AudioContext||window.webkitAudioContext;const ac=new AC();
+  let buf;try{buf=await ac.decodeAudioData(await file.arrayBuffer())}catch(e){throw new Error('صدای این فایل خوانده نشد. فرمت MP4 یا MOV معمولی را امتحان کنید.')}finally{ac.close&&ac.close()}
+  const rate=16000,len=Math.ceil(buf.duration*rate);
+  const OC=window.OfflineAudioContext||window.webkitOfflineAudioContext;const oc=new OC(1,len,rate);
+  const s=oc.createBufferSource();s.buffer=buf;s.connect(oc.destination);s.start();
+  const out=await oc.startRendering();return {pcm:out.getChannelData(0),rate,dur:buf.duration};
+}
+function wavBlob(pcm,rate){
+  const b=new ArrayBuffer(44+pcm.length*2),v=new DataView(b),w=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};
+  w(0,'RIFF');v.setUint32(4,36+pcm.length*2,true);w(8,'WAVEfmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);
+  v.setUint32(24,rate,true);v.setUint32(28,rate*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,pcm.length*2,true);
+  for(let i=0;i<pcm.length;i++){const x=Math.max(-1,Math.min(1,pcm[i]));v.setInt16(44+i*2,x<0?x*32768:x*32767,true)}
+  return new Blob([b],{type:'audio/wav'});
+}
+function b64(blob){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(blob)})}
+
+/* ---------- AI: Gemini ---------- */
+function parseJSONLoose(t){t=t.trim().replace(/^```(?:json)?/i,'').replace(/```$/,'').trim();try{return JSON.parse(t)}catch(e){const a=t.indexOf('['),b=t.lastIndexOf(']');const c=t.indexOf('{'),d=t.lastIndexOf('}');if(a>=0&&b>a&&(c<0||a<c))return JSON.parse(t.slice(a,b+1));if(c>=0&&d>c)return JSON.parse(t.slice(c,d+1));throw new Error('پاسخ سرویس قابل خواندن نبود.')}}
+async function geminiChunk(key,model,wav,lang,dur){
+  const prompt=`You are a professional subtitler. Listen to the audio (${dur.toFixed(1)} seconds long${lang!=='auto'?', spoken language: '+LANGNAME[lang]:''}).
+1) Transcribe all speech in its original language.
+2) Split it into short subtitle cues: each cue 1 to 6 seconds and at most about 12 words, cut at natural phrase boundaries.
+3) Give precise start and end times in seconds (decimal numbers) measured from the beginning of this audio. Cues must not overlap and must stay within 0 and ${dur.toFixed(1)}.
+4) Translate each cue into natural, fluent Persian (Farsi), using Persian script and correct half-spaces. Translate meaning, not word by word.
+Ignore music and noise. If there is no speech, return [].
+Return ONLY a JSON array like: [{"s":0.0,"e":2.4,"src":"original text","fa":"ترجمهٔ فارسی"}]`;
+  const body={contents:[{parts:[{inline_data:{mime_type:'audio/wav',data:await b64(wav)}},{text:prompt}]}],generationConfig:{responseMimeType:'application/json',temperature:0.2}};
+  const j=await api('https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(model)+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify(body)});
+  const cand=j.candidates&&j.candidates[0];
+  if(!cand||!cand.content||!cand.content.parts)throw new Error('سرویس پاسخی برنگرداند'+(j.promptFeedback&&j.promptFeedback.blockReason?' ('+j.promptFeedback.blockReason+')':'')+'.');
+  let arr=parseJSONLoose(cand.content.parts.map(p=>p.text||'').join(''));
+  if(!Array.isArray(arr))arr=arr.cues||arr.subtitles||arr.items||[];
+  return arr.map(o=>({s:+o.s,e:+o.e,src:String(o.src||''),fa:String(o.fa||'')})).filter(c=>isFinite(c.s)&&isFinite(c.e)&&c.fa.trim());
+}
+
+/* ---------- AI: OpenAI ---------- */
+async function openaiSTT(key,model,wav,lang,dur){
+  const mk=fmtName=>{const f=new FormData();f.append('file',wav,'audio.wav');f.append('model',model);if(lang!=='auto')f.append('language',lang);f.append('response_format',fmtName);if(fmtName==='verbose_json')f.append('timestamp_granularities[]','segment');return f};
+  const H={Authorization:'Bearer '+key};let j;
+  try{j=await api('https://api.openai.com/v1/audio/transcriptions',{method:'POST',headers:H,body:mk('verbose_json')})}
+  catch(e){if(!/\(400\)/.test(e.message))throw e;j=await api('https://api.openai.com/v1/audio/transcriptions',{method:'POST',headers:H,body:mk('json')})}
+  if(Array.isArray(j.segments)&&j.segments.length)return {cues:j.segments.map(s=>({s:+s.start,e:+s.end,src:String(s.text||'').trim(),fa:''})).filter(c=>c.src),approx:false};
+  const text=String(j.text||'').trim();if(!text)return {cues:[],approx:false};
+  // model returned text only: spread sentences over the duration by length
+  const parts=text.match(/[^.!?…。！？؟]+[.!?…。！？؟]*/g)||[text];const tot=parts.reduce((a,p)=>a+p.length,0);let t=0;
+  return {cues:parts.map(p=>{const d=dur*p.length/tot;const c={s:t,e:t+d,src:p.trim(),fa:''};t+=d;return c}).filter(c=>c.src),approx:true};
+}
+async function openaiTranslate(key,model,lines){
+  const out=[];
+  for(let i=0;i<lines.length;i+=60){
+    const part=lines.slice(i,i+60);
+    const j=await api('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+key},body:JSON.stringify({model,response_format:{type:'json_object'},messages:[
+      {role:'system',content:'You translate video subtitle lines into natural, fluent Persian (Farsi) in Persian script with correct half-spaces. The lines are consecutive parts of one speech, so keep them coherent, but translate each line separately and keep it short. Reply with a JSON object {"t":[...]} containing exactly as many strings as the input array, in the same order.'},
+      {role:'user',content:JSON.stringify(part)}]})});
+    const o=parseJSONLoose(j.choices[0].message.content);const t=Array.isArray(o)?o:(o.t||Object.values(o)[0]||[]);
+    part.forEach((_,k)=>out.push(String(t[k]!=null?t[k]:'')));
+  }
+  return out;
+}
+
+/* ---------- cue post-processing ---------- */
+function splitLong(c){
+  const words=c.fa.replace(/\n/g,' ').split(/\s+/).filter(Boolean),d=c.e-c.s;
+  if(words.length<=11&&d<=7||words.length<4)return [c];
+  let cut=-1,best=1e9;const mid=words.length/2;
+  words.forEach((w,i)=>{if(i<words.length-1&&/[،,؛;.!?؟:…]$/.test(w)){const dist=Math.abs(i+1-mid);if(dist<best){best=dist;cut=i+1}}});
+  if(cut<2||cut>words.length-2||best>mid*0.6)cut=Math.round(mid);
+  const a=words.slice(0,cut).join(' '),b=words.slice(cut).join(' '),tm=c.s+d*a.length/(a.length+b.length);
+  return [...splitLong({s:c.s,e:tm,src:c.src,fa:a}),...splitLong({s:tm,e:c.e,src:'',fa:b})];
+}
+function tidy(cues,dur){
+  cues=cues.filter(c=>c.e>c.s).sort((a,b)=>a.s-b.s).flatMap(splitLong);
+  cues.forEach((c,i)=>{c.s=Math.max(0,c.s);c.e=Math.min(dur,c.e);const n=cues[i+1];if(n&&c.e>n.s)c.e=n.s;if(c.e-c.s<0.8)c.e=Math.min(n?n.s:dur,c.s+0.8)});
+  return cues.filter(c=>c.e-c.s>0.05);
+}
+
+/* ---------- run pipeline ---------- */
+$('goBtn').onclick=async()=>{
+  saveProv();
+  const key=$('apiKey').value.trim(),m1=$('model1').value.trim(),m2=$('model2').value.trim(),lang=$('lang').value;
+  if(!S.file)return say('aiMsg','err','اول یک ویدیو انتخاب کنید.');
+  if(!key)return say('aiMsg','err','کلید API را وارد کنید.');
+  if(!m1||S.prov==='openai'&&!m2)return say('aiMsg','err','نام مدل را وارد کنید یا «دریافت فهرست مدل‌ها» را بزنید.');
+  const btn=$('goBtn');btn.disabled=true;
+  try{
+    say('aiMsg','info','در حال جداکردن صدا از ویدیو…');
+    const {pcm,rate,dur}=await decodeAudio(S.file);
+    const chunkSec=S.prov==='gemini'?300:600,n=Math.ceil(dur/chunkSec);let cues=[],approx=false,mG=m1;
+    for(let i=0;i<n;i++){
+      const off=i*chunkSec,seg=pcm.subarray(Math.floor(off*rate),Math.floor(Math.min(dur,off+chunkSec)*rate)),segDur=seg.length/rate,wav=wavBlob(seg,rate);
+      say('aiMsg','info',`در حال شنیدن و ترجمه… (بخش ${i+1} از ${n})`);
+      let part;
+      if(S.prov==='gemini'){
+        try{part=await geminiChunk(key,mG,wav,lang,segDur)}
+        catch(e){ // retired model: switch to the model the service recommends and retry once
+          const m=/use models\/([\w.\-]+)/.exec(e.message||'');
+          if(!m||m[1]===mG)throw e;
+          mG=m[1];$('model1').value=mG;saveProv();
+          say('aiMsg','info','مدل قبلی دیگر در دسترس نیست؛ با مدل '+mG+' دوباره امتحان می‌شود…');
+          part=await geminiChunk(key,mG,wav,lang,segDur);
+        }
+      }
+      else{
+        const r=await openaiSTT(key,m1,wav,lang,segDur);approx=approx||r.approx;part=r.cues;
+        if(part.length){say('aiMsg','info',`در حال ترجمه به فارسی… (بخش ${i+1} از ${n})`);const fa=await openaiTranslate(key,m2,part.map(c=>c.src));part.forEach((c,k)=>c.fa=fa[k]||c.src)}
+      }
+      part.forEach(c=>{c.s+=off;c.e+=off});cues=cues.concat(part);
+    }
+    S.cues=tidy(cues,dur);renderCues();
+    if(!S.cues.length)say('aiMsg','err','گفتاری در این ویدیو پیدا نشد.');
+    else say('aiMsg','good',S.cues.length+' خط زیرنویس ساخته شد. ویدیو را پخش کنید و در بخش ۴ متن یا زمان‌ها را اصلاح کنید.'+(approx?'\nاین مدل زمان‌بندی نمی‌دهد؛ زمان‌ها تخمینی‌اند. برای زمان‌بندی دقیق مدل whisper-1 را انتخاب کنید.':''));
+  }catch(e){say('aiMsg','err',e.message||String(e))}
+  btn.disabled=false;
+};
+
+/* ---------- export (burn-in) ---------- */
+let expAbort=null;
+$('expBtn').onclick=async()=>{
+  if(!S.file)return say('expMsg','err','اول یک ویدیو انتخاب کنید.');
+  if(!S.cues.length)return say('expMsg','err','هنوز زیرنویسی وجود ندارد.');
+  if(!window.MediaRecorder||!HTMLCanvasElement.prototype.captureStream)return say('expMsg','err','این مرورگر از ساخت ویدیو پشتیبانی نمی‌کند. مرورگر Chrome را امتحان کنید، یا فایل SRT را ذخیره کنید.');
+  const mime=['video/mp4;codecs=avc1.640028,mp4a.40.2','video/mp4;codecs=avc1.42E01E,mp4a.40.2','video/mp4;codecs=avc1.640028,opus','video/mp4;codecs=avc1.42E01E,opus','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'].find(m=>MediaRecorder.isTypeSupported(m));
+  if(!mime)return say('expMsg','err','این مرورگر فرمت خروجی مناسبی ندارد.');
+  const btn=$('expBtn'),prog=$('expProg'),cancel=$('expCancel');
+  btn.disabled=true;prog.style.display='';prog.value=0;cancel.style.display='';$('outRow').style.display='none';$('outVideo').style.display='none';
+  say('expMsg','info','در حال ساخت ویدیو… صفحه را نبندید.');vid.pause();
+  const v=document.createElement('video');v.playsInline=true;v.preload='auto';v.src=S.url;
+  v.style.cssText='position:fixed;left:0;bottom:0;width:2px;height:2px;opacity:.01;pointer-events:none';document.body.append(v);
+  let ac=null,rec=null,done=false;
+  const cleanup=()=>{done=true;try{v.pause()}catch(e){}v.remove();if(ac)ac.close();btn.disabled=false;prog.style.display='none';cancel.style.display='none';expAbort=null};
+  try{
+    await new Promise((res,rej)=>{v.onloadeddata=res;v.onerror=()=>rej(new Error('ویدیو باز نشد.'))});
+    await document.fonts.load(`${S.style.weight} 40px "${S.style.font}"`,SAMPLE).catch(()=>{});
+    const k=Math.min(1,1920/Math.max(v.videoWidth,v.videoHeight)),W=Math.round(v.videoWidth*k/2)*2,H=Math.round(v.videoHeight*k/2)*2;
+    const c=document.createElement('canvas');c.width=W;c.height=H;const ctx=c.getContext('2d');
+    const vs=c.captureStream(30);
+    ac=new (window.AudioContext||window.webkitAudioContext)();await ac.resume();
+    const dest=ac.createMediaStreamDestination();ac.createMediaElementSource(v).connect(dest);
+    const stream=new MediaStream([...vs.getVideoTracks(),...dest.stream.getAudioTracks()]);
+    rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:Math.min(12e6,Math.max(3e6,W*H*6))});
+    const chunks=[];rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
+    const finished=new Promise(res=>{rec.onstop=res});
+    const paint=()=>{
+      if(done)return;
+      ctx.drawImage(v,0,0,W,H);const t=v.currentTime,cu=cueAt(t);
+      if(cu)drawSub(ctx,W,H,cu.fa,S.style,(t-cu.s)/Math.max(0.01,cu.e-cu.s));
+      prog.value=v.duration?t/v.duration:0;
+      if(v.requestVideoFrameCallback)v.requestVideoFrameCallback(paint);else requestAnimationFrame(paint);
+    };
+    let aborted=false;
+    expAbort=()=>{aborted=true;if(rec.state!=='inactive')rec.stop()};
+    v.onended=()=>{setTimeout(()=>{if(rec.state!=='inactive')rec.stop()},250)};
+    rec.start(1000);paint();await v.play();
+    await finished;cleanup();
+    if(aborted)return say('expMsg','info','ساخت ویدیو لغو شد.');
+    const type=mime.split(';')[0],ext=type==='video/mp4'?'mp4':'webm',blob=new Blob(chunks,{type}),name='zirnevis-'+Date.now()+'.'+ext;
+    const url=URL.createObjectURL(blob),ovd=$('outVideo');ovd.src=url;ovd.style.display='block';
+    const dl=$('outDl');dl.href=url;dl.download=name;$('outRow').style.display='flex';
+    const sh=$('outShare');let f=null;try{f=new File([blob],name,{type})}catch(e){}
+    if(f&&navigator.canShare&&navigator.canShare({files:[f]})){sh.style.display='';sh.onclick=()=>navigator.share({files:[f]}).catch(()=>{})}else sh.style.display='none';
+    say('expMsg','good','ویدیو آماده شد ('+(blob.size/1048576).toFixed(1)+' مگابایت، فرمت '+ext.toUpperCase()+').'+(ext==='webm'?'\nاین مرورگر خروجی WebM می‌دهد؛ اگر MP4 لازم دارید، Chrome جدید یا Safari را امتحان کنید.':''));
+  }catch(e){cleanup();say('expMsg','err','ساخت ویدیو انجام نشد: '+(e.message||e))}
+};
+$('expCancel').onclick=()=>{if(expAbort)expAbort()};
+
+/* ---------- init ---------- */
+loadProv();syncControls();buildGallery();renderCues();
+if(document.fonts&&document.fonts.load){
+  Promise.all(Object.keys(FONTS).flatMap(f=>[400,700,800,900].map(w=>document.fonts.load(`${w} 20px "${f}"`,SAMPLE).catch(()=>{})))).then(drawGallery);
+  document.fonts.addEventListener&&document.fonts.addEventListener('loadingdone',drawGallery);
+}
+window.addEventListener('resize',drawGallery);
+</script>
+</body>
+</html>
